@@ -3,6 +3,7 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 const UserService = require('../lib/services/UserService');
+const Todo = require('../lib/models/Todo');
 //const Todo = require('../lib/models/Todo');
 
 const mockUser = {
@@ -41,7 +42,7 @@ describe('todos', () => {
   afterAll(() => {
     pool.end();
   });
-  it.only('POST /api/v1/items creates a new todo with the current user', async () => {
+  it('POST /api/v1/todos creates a new todo with the current user', async () => {
     const [agent, user] = await registerAndLogin();
     const newItem = { task_name: 'Getr done', completed: false };
     const resp = await agent.post('/api/v1/todos').send(newItem);
@@ -54,23 +55,23 @@ describe('todos', () => {
     });
   });
 
-  it('GET /api/v1/items returns all items associated with the authenticated User', async () => {
+  it.only('GET /api/v1/todos returns all todos associated with the authenticated User', async () => {
     // create a user
     const [agent, user] = await registerAndLogin();
     // add a second user with items
     const user2 = await UserService.create(mockUser2);
-    const user1Item = await Item.insert({
-      description: 'apples',
-      qty: 6,
+    const user1Item = await Todo.insert({
+      task_name: 'the task',
+      completed: false,
       user_id: user.id,
     });
-    await Item.insert({
-      description: 'eggs',
-      qty: 12,
+    await Todo.insert({
+      task_name: 'not the task',
+      completed: false,
       user_id: user2.id,
     });
-    const resp = await agent.get('/api/v1/items');
-    //expect(resp.status).toEqual(200);
+    const resp = await agent.get('/api/v1/todos');
+    expect(resp.status).toEqual(200);
     expect(resp.body).toEqual([user1Item]);
     
   });
