@@ -81,7 +81,7 @@ describe('todos', () => {
     expect(resp.status).toEqual(401);
   });
 
-  it.only('UPDATE /api/v1/todos/:id should update an item', async () => {
+  it('UPDATE /api/v1/todos/:id should update a todo', async () => {
     // create a user
     const [agent, user] = await registerAndLogin();
     const item = await Todo.insert({
@@ -96,18 +96,18 @@ describe('todos', () => {
     expect(resp.body).toEqual({ ...item, completed: true });
   });
 
-  it('UPDATE /api/v1/items/:id should 403 for invalid users', async () => {
+  it.only('UPDATE /api/v1/items/:id should 403 for invalid users', async () => {
     // create a user
     const [agent] = await registerAndLogin();
     // create a second user
     const user2 = await UserService.create(mockUser2);
-    const item = await Item.insert({
-      description: 'apples',
-      qty: 6,
+    const item = await Todo.insert({
+      task_name: 'not the task',
+      completed: false,
       user_id: user2.id,
     });
     const resp = await agent
-      .put(`/api/v1/items/${item.id}`)
+      .put(`/api/v1/todos/${item.id}`)
       .send({ bought: true });
     expect(resp.status).toBe(403);
   });
