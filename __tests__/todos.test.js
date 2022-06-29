@@ -96,7 +96,7 @@ describe('todos', () => {
     expect(resp.body).toEqual({ ...item, completed: true });
   });
 
-  it.only('UPDATE /api/v1/items/:id should 403 for invalid users', async () => {
+  it('UPDATE /api/v1/items/:id should 403 for invalid users', async () => {
     // create a user
     const [agent] = await registerAndLogin();
     // create a second user
@@ -112,17 +112,17 @@ describe('todos', () => {
     expect(resp.status).toBe(403);
   });
 
-  it('DELETE /api/v1/items/:id should delete items for valid user', async () => {
+  it.only('DELETE /api/v1/todos/:id should delete todos for valid user', async () => {
     const [agent, user] = await registerAndLogin();
-    const item = await Item.insert({
-      description: 'apples',
-      qty: 6,
+    const item = await Todo.insert({
+      task_name: 'the task',
+      completed: false,
       user_id: user.id,
     });
-    const resp = await agent.delete(`/api/v1/items/${item.id}`);
+    const resp = await agent.delete(`/api/v1/todos/${item.id}`);
     expect(resp.status).toBe(200);
 
-    const check = await Item.getById(item.id);
+    const check = await Todo.getById(item.id);
     expect(check).toBeNull();
   });
 });
