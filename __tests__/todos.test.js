@@ -55,7 +55,7 @@ describe('todos', () => {
     });
   });
 
-  it.only('GET /api/v1/todos returns all todos associated with the authenticated User', async () => {
+  it('GET /api/v1/todos returns all todos associated with the authenticated User', async () => {
     // create a user
     const [agent, user] = await registerAndLogin();
     // add a second user with items
@@ -76,24 +76,24 @@ describe('todos', () => {
     
   });
 
-  it('GET /api/v1/items should return a 401 if not authenticated', async () => {
-    const resp = await request(app).get('/api/v1/items');
+  it('GET /api/v1/todos should return a 401 if not authenticated', async () => {
+    const resp = await request(app).get('/api/v1/todos');
     expect(resp.status).toEqual(401);
   });
 
-  it('UPDATE /api/v1/items/:id should update an item', async () => {
+  it.only('UPDATE /api/v1/todos/:id should update an item', async () => {
     // create a user
     const [agent, user] = await registerAndLogin();
-    const item = await Item.insert({
-      description: 'apples',
-      qty: 6,
+    const item = await Todo.insert({
+      task_name: 'the task',
+      completed: false,
       user_id: user.id,
     });
     const resp = await agent
-      .put(`/api/v1/items/${item.id}`)
-      .send({ bought: true });
+      .put(`/api/v1/todos/${item.id}`)
+      .send({ completed: true });
     expect(resp.status).toBe(200);
-    expect(resp.body).toEqual({ ...item, bought: true });
+    expect(resp.body).toEqual({ ...item, completed: true });
   });
 
   it('UPDATE /api/v1/items/:id should 403 for invalid users', async () => {
