@@ -112,7 +112,7 @@ describe('todos', () => {
     expect(resp.status).toBe(403);
   });
 
-  it.only('DELETE /api/v1/todos/:id should delete todos for valid user', async () => {
+  it('DELETE /api/v1/todos/:id should delete todos for valid user', async () => {
     const [agent, user] = await registerAndLogin();
     const item = await Todo.insert({
       task_name: 'the task',
